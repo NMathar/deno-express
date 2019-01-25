@@ -6,7 +6,7 @@ This Project is inspired by https://github.com/jinjor/deno-playground/tree/maste
 ## Example 
 
 ```typescript
-import * as expressive from "PATH/TO/GIT/REPO/mod.ts";
+import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-express/master/mod.ts";
 
 (async () => {
   const port = 3000;
