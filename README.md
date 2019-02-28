@@ -18,5 +18,6 @@ import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-expr
     await res.json([{ name: "Buy some milk" }]);
   });
   const server = await app.listen(port);
+  console.log("app listening on port " + server.port);
 })();
 ```

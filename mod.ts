@@ -83,9 +83,11 @@ export class App {
                 try {
                     await runMiddlewares(self.middlewares, req, res);
                 } catch (e) {
-                    console.error('runMiddlewar: ', e)
+                    console.error('runMiddlewar: ', e.message)
                     if (!res.status) {
                         res.status = 500;
+                        res.close();
+                    }else{
                         res.close();
                     }
                 }
@@ -100,7 +102,7 @@ export class App {
         async function close() {
             abort = true;
         }
-        await start();
+        start();
         return {
             port,
             close
@@ -252,7 +254,10 @@ async function runMiddleware(
                 req.extra.matchedPattern = m.pattern;
                 req.params = params;
                 await m.handle(req, res);
-            } else {
+            } else if(params === null) {
+                res.status = 404
+                next();
+            }else {
                 next();
             }
         }
@@ -272,7 +277,7 @@ export function static_(dir: string): Middleware {
             if (e instanceof DenoError && e.kind === ErrorKind.NotFound) {
                 await next();
             } else {
-                console.error('_static: ', e)
+                console.error('_static: ', e.message)
                 throw e;
             }
         }
@@ -287,9 +292,9 @@ export const bodyParser = {
                     const text = new TextDecoder().decode(body);
                     req.data = JSON.parse(text);
                 } catch (e) {
-                    console.error('json: ', e)
+                    console.error('json: ', e.message)
                     res.status = 400;
-                    req.error = e;
+                    req.error = e.message;
                     return;
                 }
             }
@@ -322,9 +327,9 @@ export const bodyParser = {
                     }
                     req.data = data;
                 } catch (e) {
-                    console.error('urlencoded: ', e)
+                    console.error('urlencoded: ', e.message)
                     res.status = 400;
-                    req.error = e;
+                    req.error = e.message;
                     return;
                 }
             }
