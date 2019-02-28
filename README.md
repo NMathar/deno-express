@@ -4,7 +4,7 @@ This Project is inspired by https://github.com/jinjor/deno-playground/tree/maste
 
 
 ## Example 
-
+server.ts File
 ```typescript
 import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-express/master/mod.ts";
 
@@ -21,3 +21,6 @@ import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-expr
   console.log("app listening on port " + server.port);
 })();
 ```
+
+### Start app
+`deno server.ts --allow-net --allow-read`
