@@ -87,7 +87,7 @@ export class App {
                     if (!res.status) {
                         res.status = 500;
                         res.close();
-                    }else{
+                    } else {
                         res.close();
                     }
                 }
@@ -234,13 +234,14 @@ async function runMiddlewares(
 ): Promise<void> {
     if (ms.length) {
         const [m, ...rest] = ms;
-        await runMiddleware(m, req, res, () => {
+        await runMiddleware(m, ms.length, req, res, () => {
             return runMiddlewares(rest, req, res);
         });
     }
 }
 async function runMiddleware(
     m: Middleware,
+    length: number,
     req: Request,
     res: Response,
     next: Next
@@ -254,10 +255,9 @@ async function runMiddleware(
                 req.extra.matchedPattern = m.pattern;
                 req.params = params;
                 await m.handle(req, res);
-            } else if(params === null) {
-                res.status = 404
-                next();
-            }else {
+            } else {
+                if (length === 1) // if is last next and no route is found the route does not exist
+                    res.status = 404
                 next();
             }
         }
