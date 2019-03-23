@@ -1,13 +1,12 @@
-import {
-    stat,
+const { stat,
     open,
     resources,
     DenoError,
     ErrorKind,
-    readFile,
-    Reader,
-    Closer
-} from "deno";
+    readFile } = Deno;
+
+type Reader = Deno.Reader;
+type Closer = Deno.Closer;
 import { lookup } from "https://deno.land/x/std/media_types/mod.ts";
 import { path, http, red, yellow, cyan, green } from "deps.ts";
 
