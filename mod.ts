@@ -8,7 +8,7 @@ const { stat,
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
 import { lookup } from "https://deno.land/x/std/media_types/mod.ts";
-import { path, http, red, yellow, cyan, green } from "deps.ts";
+import { path, http, red, yellow, cyan, green } from "./deps.ts";
 
 type Method = "HEAD" | "OPTIONS" | "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 type Next = () => Promise<void>;
