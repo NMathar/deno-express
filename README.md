@@ -7,9 +7,9 @@ This Project is inspired by https://github.com/jinjor/deno-playground/tree/maste
 
 Works with Version:
 
-deno: 0.3.4
-v8: 7.4.238
-typescript: 3.3.3333
+deno: 0.3.4 <br>
+v8: 7.4.238 <br>
+typescript: 3.3.3333 <br>
 
 server.ts File
 ```typescript
