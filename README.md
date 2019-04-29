@@ -4,6 +4,13 @@ This Project is inspired by https://github.com/jinjor/deno-playground/tree/maste
 
 
 ## Example 
+
+Works with Version:
+
+deno: 0.3.4
+v8: 7.4.238
+typescript: 3.3.3333
+
 server.ts File
 ```typescript
 import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-express/master/mod.ts";
