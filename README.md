@@ -7,9 +7,13 @@ This Project is inspired by https://github.com/jinjor/deno-playground/tree/maste
 
 Works with Version:
 
-deno: 0.3.4 <br>
-v8: 7.4.238 <br>
-typescript: 3.3.3333 <br>
+deno: 0.3.4 <br />
+v8: 7.4.238 <br />
+typescript: 3.3.3333 <br />
+<hr />
+deno: 0.5.0<br />
+v8: 7.6.53<br />
+typescript: 3.4.1<br />
 
 server.ts File
 ```typescript
@@ -34,4 +38,4 @@ import * as expressive from "https://raw.githubusercontent.com/NMathar/deno-expr
 ```
 
 ### Start app
-`deno server.ts --allow-net --allow-read`
+`deno run --allow-net --allow-read server.ts`
