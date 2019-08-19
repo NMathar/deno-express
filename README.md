@@ -1,4 +1,4 @@
-# Node Exrpress way for Deno
+# Node Express way for Deno
 
 This Project is inspired by https://github.com/jinjor/deno-playground/tree/master/expressive it shows a solution to run a Deno Webserver like the node express way
 
