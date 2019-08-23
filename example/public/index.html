@@ -1,66 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
 
-    <title>Deno Express Start Page</title>
+        <title>Deno Express Start Page</title>
 
-    <!-- Required Stylesheets -->
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"
-    />
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"
-    />
+        <!-- Required Stylesheets -->
+        <link href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link
+        href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" rel="stylesheet" type="text/css"/>
 
-    <!-- Load polyfills to support older browsers -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
+        <!-- Load polyfills to support older browsers -->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
 
-    <!-- Required scripts -->
-    <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
-    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
-  </head>
-  <body>
-    <!-- Our application root element -->
-    <div id="app">
-      <b-container>
-        <b-jumbotron header="Deno Express" lead="Node Express way with Deno">
-          <b-img src="/img/deno-express.png" fluid width="200"></b-img>
-        </b-jumbotron>
+        <!-- Required scripts -->
+        <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
+        <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <!-- Our application root element -->
+        <div id="app">
+            <b-container>
+                <b-jumbotron header="Deno Express" lead="Node Express way with Deno">
+                    <b-img fluid src="/img/deno-express.png" width="200"></b-img>
+                </b-jumbotron>
 
-        <b-form-group
-          horizontal
-          :label-cols="4"
-          description="Let us know your name."
-          label="Enter your name"
-        >
-          <b-form-input v-model.trim="name"></b-form-input>
-        </b-form-group>
+                <b-form-group :label-cols="4" description="Let us know your name." horizontal label="Enter your name">
+                    <b-form-input v-model.trim="name"></b-form-input>
+                </b-form-group>
 
-        <b-alert variant="success" :show="showAlert">Hello {{ name }}</b-alert>
-      </b-container>
-    </div>
+                <b-alert :show="showAlert" variant="success">Hello
+                    {{ name }}</b-alert>
 
-    <!-- Start running your app -->
-    <script>
-      window.app = new Vue({
-        el: '#app',
-        data: {
-          name: ''
-        },
-        computed: {
-          showAlert() {
-            return this.name.length > 2 ? true : false
-          }
-        }
-      })
-    </script>
-  </body>
+                <h1>Todos:</h1>
+                <ul>
+                  <li v-for="todo in todos">
+                      {{todo.name}}
+                  </li>
+                </ul>
+            </b-container>
+        </div>
+
+        <!-- Start running your app -->
+        <script>
+            window.app = new Vue({
+                el: '#app',
+                data: {
+                    name: '',
+                    todos: []
+                },
+                computed: {
+                    showAlert() {
+                        return this.name.length > 2 ? true : false
+                    }
+                },
+                mounted() {
+                    axios.get('/api/todos').then(response => (this.todos = response.data))
+                }
+            })
+        </script>
+    </body>
 </html>
