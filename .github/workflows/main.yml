@@ -1,4 +1,4 @@
-name: TEST
+name: CI
 
 on: 
   push:
@@ -9,7 +9,7 @@ on:
     - cron: 0 2 * * 1-5
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
     
