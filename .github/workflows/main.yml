@@ -9,7 +9,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: install deno and ru test
+    - name: install deno and run test
       run: |
         curl -fsSL https://deno.land/x/install/install.sh | sh
-        ./deno/deno run test.ts
+        ~/.deno run test.ts
+    - name: run test
+      run: ~/.deno run test.ts
