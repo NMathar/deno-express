@@ -15,3 +15,5 @@ jobs:
       run: ~/.deno/bin/deno fetch test.ts
     - name: run test
       run: ~/.deno/bin/deno run test.ts
+    - name: fetch example app
+      run: ~/.deno/bin/deno fetch example/server.ts
