@@ -3,6 +3,8 @@
 </div>
 
 # Deno Express
+[![Build Status](https://github.com/NMathar/deno-express/workflows/CI/badge.svg?branch=master)](https://github.com/NMathar/deno-express/actions)
+
 ## Node Express way for Deno
 
 This Project is inspired by https://github.com/jinjor/deno-playground/tree/master/expressive it shows a solution to run a Deno Webserver like the node express way
