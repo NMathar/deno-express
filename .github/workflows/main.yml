@@ -18,8 +18,8 @@ jobs:
     - name: install deno
       run: curl -fsSL https://deno.land/x/install/install.sh | sh
     - name: fetch sources
-      run: ~/.deno/bin/deno fetch test.ts
+      run: ~/.local/bin/deno fetch test.ts
     - name: run test
-      run: ~/.deno/bin/deno run test.ts
+      run: ~/.local/bin/deno run test.ts
     - name: fetch example app
-      run: ~/.deno/bin/deno fetch example/server.ts
+      run: ~/.local/bin/deno fetch example/server.ts
