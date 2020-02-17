@@ -1,23 +1,15 @@
-import { test, runTests } from "https://deno.land/std/testing/mod.ts";
 import { assert, assertEquals, assertThrows} from "https://deno.land/std/testing/asserts.ts"; 
 import { Request, simplePathMatcher } from "./mod.ts";
 
-test({
-  name: "Testing function parse_url",
-  fn(): void {
-    {
-      const req = new Request({
+Deno.test(function testParse_url() {
+  const req = new Request({
         url: "/files-tmb/1234/abc.png?key=val"
       });
       assertEquals(req.path, "/files-tmb/1234/abc.png");
       assertEquals(req.query.key, "val");
-    }
-  }
 });
 
-test({
-  name: "Testing function simplePathMatcher",
-  fn(): void {
+Deno.test(function testSimplePathMatcher() {
     assert(!!simplePathMatcher("/")("/"));
     assert(!!simplePathMatcher("/foo")("/foo"));
     assert(!!simplePathMatcher("/foo/")("/foo/"));
@@ -33,7 +25,6 @@ test({
         simplePathMatcher(v);
       });
     }
-  }
 });
 
-runTests();
+await Deno.runTests();
