@@ -1,4 +1,4 @@
-const { stat, open, DenoError, ErrorKind, readFile } = Deno;
+const { stat, open, readFile } = Deno;
 
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
@@ -37,7 +37,7 @@ export const simplePathMatcher: PathMatcher = _pattern => {
     if (pattern.length !== path.length) {
       return null;
     }
-    const params = {};
+    const params: any = {};
     for (let i = 0; i < pattern.length; i++) {
       const p = pattern[i];
       if (p[0] === "{" && p[p.length - 1] === "}") {
@@ -110,19 +110,19 @@ export class App {
       handle
     });
   }
-  get(pattern, handle: EndHandler): void {
+  get(pattern: any, handle: EndHandler): void {
     this.addPathHandler("GET", pattern, handle);
   }
-  post(pattern, handle: EndHandler): void {
+  post(pattern: any, handle: EndHandler): void {
     this.addPathHandler("POST", pattern, handle);
   }
-  put(pattern, handle: EndHandler): void {
+  put(pattern: any, handle: EndHandler): void {
     this.addPathHandler("PUT", pattern, handle);
   }
-  patch(pattern, handle: EndHandler): void {
+  patch(pattern: any, handle: EndHandler): void {
     this.addPathHandler("PATCH", pattern, handle);
   }
-  delete(pattern, handle: EndHandler): void {
+  delete(pattern: any, handle: EndHandler): void {
     this.addPathHandler("DELETE", pattern, handle);
   }
 }
@@ -143,15 +143,15 @@ export class Request {
   path: string;
   search: string;
   query: Query;
-  params: Params;
+  params!: Params;
   data: any;
   error?: Error;
   extra: any = {};
-  constructor(public raw) {
+  constructor(public raw: any) {
     const url = new URL("http://a.b" + raw.url);
     this.path = url.pathname;
     this.search = url.search;
-    const query = {};
+    const query: Query = {};
     for (let [k, v] of new URLSearchParams(url.search) as any) {
       if (Array.isArray(query[k])) {
         query[k] = [...query[k], v];
@@ -201,8 +201,8 @@ class Response {
       this.status = 304;
       return;
     }
-    const extname = path.extname(filePath);
-    const contentType = lookup(extname.slice(1));
+    const extname: string = path.extname(filePath);
+    const contentType: any = lookup(extname.slice(1)) || '';
     const fileInfo = await stat(filePath);
     if (!fileInfo.isFile()) {
       return;
@@ -269,12 +269,9 @@ export function static_(dir: string): Middleware {
     try {
       await res.file(filePath);
     } catch (e) {
-      if (e instanceof DenoError && e.kind === ErrorKind.NotFound) {
+        // TODO: a better error handling
+        console.log(e);
         await next();
-      } else {
-        console.error("_static: ", e.message);
-        throw e;
-      }
     }
   };
 }
@@ -302,22 +299,23 @@ export const bodyParser = {
         req.headers.get("Content-Type") === "application/x-www-form-urlencoded"
       ) {
         try {
-          const body = await req.body();
-          const text = new TextDecoder().decode(body);
-          const data = {};
+          const body: any = await req.body();
+          const text: any = new TextDecoder().decode(body);
+          const data: any = {};
           for (let s of text.split("&")) {
             const result = /^(.+?)=(.*)$/.exec(s);
-            if (result.length < 3) {
+            if (result !== null && result.length < 3) {
               continue;
-            }
-            const key = decodeURIComponent(result[1].replace("+", " "));
-            const value = decodeURIComponent(result[2].replace("+", " "));
-            if (Array.isArray(data[key])) {
-              data[key] = [...data[key], value];
-            } else if (data[key]) {
-              data[key] = [data[key], value];
-            } else {
-              data[key] = value;
+            }else if(result !== null){
+              const key = decodeURIComponent(result[1].replace("+", " "));
+              const value = decodeURIComponent(result[2].replace("+", " "));
+              if (Array.isArray(data[key])) {
+                data[key] = [...data[key], value];
+              } else if (data[key]) {
+                data[key] = [data[key], value];
+              } else {
+                data[key] = value;
+              }
             }
           }
           req.data = data;
