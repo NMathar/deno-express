@@ -12,6 +12,18 @@ import * as expressive from "../mod.ts";
   app.get("/api/user/{user_id}", async (req, res) => {
     await res.json([{ id: req.params.user_id, name: "Jim Doe", phone: "12425323" }]);
   });
+
+  /**
+   * Send test call
+   *
+   * curl --header "Content-Type: application/json" \
+   --request POST \
+   --data '{"testName":"Harry Potter"}' \
+   http://localhost:5000/api/todo/save
+   */
+  app.post("/api/todo/save", async (req, res) => {
+    await res.json({ name: req.data.testName });
+  });
   const server = await app.listen(port);
   console.log("app listening on port: " + server.port);
 })();
