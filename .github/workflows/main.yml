@@ -17,9 +17,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: install deno
       run: curl -fsSL https://deno.land/x/install/install.sh | sh
-    - name: fetch sources
-      run: ~/.deno/bin/deno fetch test.ts
+    #- name: fetch sources
+    #  run: ~/.deno/bin/deno fetch test.ts
     - name: run test
       run: ~/.deno/bin/deno run test.ts
-    - name: fetch example app
-      run: ~/.deno/bin/deno fetch example/server.ts
+    #- name: fetch example app
+    #  run: ~/.deno/bin/deno fetch example/server.ts
