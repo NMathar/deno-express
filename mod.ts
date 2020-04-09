@@ -2,8 +2,8 @@ const {stat, open, readFile} = Deno;
 
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
-import {lookup} from "https://deno.land/x/std/media_types/mod.ts";
 import {bodyReader} from "https://deno.land/x/std/http/io.ts";
+import Mime from "https://raw.githubusercontent.com/janesser/node-mime/feature/rollup-esm/dist/mime.esm.js";
 import {path, http, red, yellow, cyan, green} from "./deps.ts";
 
 type Method = "HEAD" | "OPTIONS" | "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -224,7 +224,7 @@ class Response {
             return;
         }
         const extname: string = path.extname(filePath);
-        const contentType: any = lookup(extname.slice(1)) || '';
+        const contentType: any = Mime.getType(extname.slice(1)) || '';
         const fileInfo = await stat(filePath);
         if (!fileInfo.isFile()) {
             return;
