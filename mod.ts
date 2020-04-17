@@ -226,7 +226,7 @@ class Response {
         const extname: string = path.extname(filePath);
         const contentType: any = lookup(extname.slice(1)) || '';
         const fileInfo = await stat(filePath);
-        if (!fileInfo.isFile()) {
+        if (!fileInfo.isFile) {
             return;
         }
         this.headers.append("Content-Type", contentType);
