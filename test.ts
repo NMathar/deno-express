@@ -27,4 +27,4 @@ Deno.test({name: "testSimplePathMatcher", fn() {
     }
 }});
 
-await Deno.runTests();
+//await Deno.runTests();
