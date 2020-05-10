@@ -2,7 +2,7 @@ const {stat, open, readFile} = Deno;
 
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
-import {bodyReader} from "https://deno.land/x/std/http/io.ts";
+import {bodyReader} from "https://deno.land/x/std/http/_io.ts";
 import Mime from "https://raw.githubusercontent.com/janesser/node-mime/feature/rollup-esm/dist/mime.esm.js";
 import {path, http, red, yellow, cyan, green} from "./deps.ts";
 
