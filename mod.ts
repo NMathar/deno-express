@@ -182,7 +182,7 @@ export class Request {
     }
 }
 
-class Response {
+export class Response {
     status = 200;
     headers = new Headers();
     body?: string | Uint8Array | Reader;
