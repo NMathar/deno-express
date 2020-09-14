@@ -276,8 +276,8 @@ export const bodyParser = {
                     const data: any = {};
                     for (let s of text.split("&")) {
                         const result = /^(.+?)=(.*)$/.exec(s);
-                        if (result !== null && result.length < 3) continue;
-                        else if (result !== null) {
+                        if (result !== null) {
+                            if (result.length < 3) continue;
                             const key = decodeURIComponent(result[1].replace("+", " "));
                             const value = decodeURIComponent(result[2].replace("+", " "));
                             if (Array.isArray(data[key])) data[key] = [...data[key], value];
