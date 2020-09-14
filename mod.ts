@@ -24,9 +24,7 @@ export const simplePathMatcher: PathMatcher = _pattern => {
             if (!name) throw new Error("invalid param name");
             if (names.has(name)) throw new Error("duplicated param name");
             names.add(name);
-        } else if (!p.trim() && i > 0 && i < pattern.length - 1) {
-            throw new Error("invalid path segment");
-        }
+        } else if (!p.trim() && i > 0 && i < pattern.length - 1) throw new Error("invalid path segment");
     }
     return _path => {
         const path = _path.split("/");
@@ -38,9 +36,7 @@ export const simplePathMatcher: PathMatcher = _pattern => {
             if (p[0] === "{" && p[p.length - 1] === "}") {
                 const name = p.slice(1, -1).trim();
                 params[name] = path[i];
-            } else if (p !== path[i]) {
-                return null;
-            }
+            } else if (p !== path[i]) return null;
         }
         return params;
     };
@@ -56,9 +52,7 @@ export interface PathHandler {
 export class App {
     middlewares: Middleware[] = [];
 
-    use(m: Middleware) {
-        this.middlewares.push(m);
-    }
+    use(m: Middleware) { this.middlewares.push(m); }
 
     async listen(port: number, host = "127.0.0.1") {
         const s = http.serve(`${host}:${port}`);
@@ -73,8 +67,8 @@ export class App {
                 try {
                     await runMiddlewares(self.middlewares, req, res);
                 } catch (e) {
-                    console.error("runMiddlewar: ", e.message);
-                    if (!res.status) res.status = 500;
+                    console.error("=====\nrunMiddlewar: ", e.message + `\nURL: ${req.url}\n=====`);
+                    if (res.status !== 500) res.status = 500;
                     res.close();
                 }
                 try {
@@ -86,15 +80,10 @@ export class App {
             }
         }
 
-        async function close() {
-            abort = true;
-        }
+        async function close() { abort = true; }
 
         start();
-        return {
-            port,
-            close
-        };
+        return { port, close };
     }
 
     private addPathHandler(method: Method, pattern: string, handle: EndHandler) {
@@ -128,21 +117,13 @@ export class App {
 }
 
 export class Request {
-    get method(): Method {
-        return this.raw.method;
-    }
+    get method(): Method { return this.raw.method; }
 
-    get url(): string {
-        return this.raw.url;
-    }
+    get url(): string { return this.raw.url; }
 
-    get headers(): Headers {
-        return this.raw.headers;
-    }
+    get headers(): Headers { return this.raw.headers; }
 
-    get body(): Uint8Array {
-        return this.raw.r.buf
-    }
+    get body(): Uint8Array { return this.raw.r.buf }
 
     path: string;
     search: string;
@@ -181,15 +162,9 @@ export class Response {
         return {status, headers, body};
     }
 
-    close() {
-        for (let resource of this.resources) {
-            resource.close();
-        }
-    }
+    close() { for (let resource of this.resources) { resource.close(); } }
 
-    async empty(status: number): Promise<void> {
-        this.status = status;
-    }
+    async empty(status: number): Promise<void> { this.status = status; }
 
     async json(json: any): Promise<void> {
         this.headers.append("Content-Type", "application/json");
@@ -256,9 +231,7 @@ async function runMiddleware(
             next();
         }
         next();
-    } else {
-        await m(req, res, next);
-    }
+    } else await m(req, res, next);
 }
 
 function isPathHandler(m: Middleware): m is PathHandler {
@@ -296,18 +269,15 @@ export const bodyParser = {
     },
     urlencoded(): Middleware {
         return async (req, res, next) => {
-            if (
-                req.headers.get("Content-Type") === "application/x-www-form-urlencoded"
-            ) {
+            if (req.headers.get("Content-Type") === "application/x-www-form-urlencoded") {
                 try {
                     const body: any = await req.body;
                     const text: any = new TextDecoder().decode(body);
                     const data: any = {};
                     for (let s of text.split("&")) {
                         const result = /^(.+?)=(.*)$/.exec(s);
-                        if (result !== null && result.length < 3) {
-                            continue;
-                        } else if (result !== null) {
+                        if (result !== null && result.length < 3) continue;
+                        else if (result !== null) {
                             const key = decodeURIComponent(result[1].replace("+", " "));
                             const value = decodeURIComponent(result[2].replace("+", " "));
                             if (Array.isArray(data[key])) data[key] = [...data[key], value];
@@ -332,10 +302,8 @@ export function simpleLog(): Handler {
     return async (req, res, next) => {
         await next();
         if (!res) return console.log(req.method, req.url);
-        if (res.status >= 500) {
-            if (req.error) console.log(red(req.error + ""));
-            return console.log(red(res.status + ""), req.method, req.url);
-        }
+        if (req.error) console.log(red(req.error + ""));
+        if (res.status >= 500) return console.log(red(res.status + ""), req.method, req.url);
         if (res.status >= 400) return console.log(yellow(res.status + ""), req.method, req.url);
         if (res.status >= 300) return console.log(cyan(res.status + ""), req.method, req.url);
         if (res.status >= 200) return console.log(green(res.status + ""), req.method, req.url);
