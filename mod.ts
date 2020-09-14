@@ -21,12 +21,8 @@ export const simplePathMatcher: PathMatcher = _pattern => {
         const p = pattern[i];
         if (p[0] === "{" && p[p.length - 1] === "}") {
             const name = p.slice(1, -1).trim();
-            if (!name) {
-                throw new Error("invalid param name");
-            }
-            if (names.has(name)) {
-                throw new Error("duplicated param name");
-            }
+            if (!name) throw new Error("invalid param name");
+            if (names.has(name)) throw new Error("duplicated param name");
             names.add(name);
         } else if (!p.trim() && i > 0 && i < pattern.length - 1) {
             throw new Error("invalid path segment");
@@ -34,9 +30,8 @@ export const simplePathMatcher: PathMatcher = _pattern => {
     }
     return _path => {
         const path = _path.split("/");
-        if (pattern.length !== path.length) {
-            return null;
-        }
+        if (pattern.length !== path.length) return null;
+
         const params: any = {};
         for (let i = 0; i < pattern.length; i++) {
             const p = pattern[i];
@@ -72,9 +67,7 @@ export class App {
 
         async function start() {
             for await (const httpRequest of s) {
-                if (abort) {
-                    break;
-                }
+                if (abort) break;
                 const req = new Request(httpRequest);
                 const res = new Response();
                 try {
@@ -183,9 +176,7 @@ export class Response {
         let {status = 200, headers, body = new Uint8Array(0)} = this;
         if (typeof body === "string") {
             body = new TextEncoder().encode(body);
-            if (!headers.has("Content-Type")) {
-                headers.append("Content-Type", "text/plain");
-            }
+            if (!headers.has("Content-Type")) headers.append("Content-Type", "text/plain");
         }
         return {status, headers, body};
     }
@@ -254,21 +245,17 @@ async function runMiddleware(
     next: Next
 ): Promise<void> {
     if (isPathHandler(m)) {
-        if (m.method !== req.method) {
-            next();
-        } else {
+        if (m.method === req.method) {
             const params = m.match(req.url);
             if (params) {
                 req.extra.matchedPattern = m.pattern;
                 req.params = params;
-                await m.handle(req, res);
-            } else {
-                if (length === 1)
-                    // if is last next and no route is found the route does not exist
-                    res.status = 404;
-                next();
+                return await m.handle(req, res);
             }
+            if (length === 1) res.status = 404; // if is last next and no route is found the route does not exist
+            next();
         }
+        next();
     } else {
         await m(req, res, next);
     }
@@ -328,13 +315,9 @@ export const bodyParser = {
                         } else if (result !== null) {
                             const key = decodeURIComponent(result[1].replace("+", " "));
                             const value = decodeURIComponent(result[2].replace("+", " "));
-                            if (Array.isArray(data[key])) {
-                                data[key] = [...data[key], value];
-                            } else if (data[key]) {
-                                data[key] = [data[key], value];
-                            } else {
-                                data[key] = value;
-                            }
+                            if (Array.isArray(data[key])) data[key] = [...data[key], value];
+                            else if (data[key]) data[key] = [data[key], value];
+                            else data[key] = value;
                         }
                     }
                     req.data = data;
