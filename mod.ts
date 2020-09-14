@@ -288,9 +288,9 @@ function isPathHandler(m: Middleware): m is PathHandler {
     return typeof m !== "function";
 }
 
-export function static_(dir: string): Middleware {
+export function static_(dir: string, ext: string = "html"): Middleware {
     return async (req, res, next) => {
-        const filePath = path.join(dir, req.url.slice(1) || "index.html");
+        const filePath = path.join(dir, req.url.slice(1) || "index." + ext);
         try {
             await res.file(filePath);
         } catch (e) {
