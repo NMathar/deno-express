@@ -2,7 +2,6 @@ const {stat, open, readFile} = Deno;
 
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
-import {bodyReader} from "https://deno.land/x/std/http/_io.ts";
 import { lookup } from "https://deno.land/x/media_types/mod.ts";
 import {path, http, red, yellow, cyan, green} from "./deps.ts";
 
@@ -82,12 +81,8 @@ export class App {
                     await runMiddlewares(self.middlewares, req, res);
                 } catch (e) {
                     console.error("runMiddlewar: ", e.message);
-                    if (!res.status) {
-                        res.status = 500;
-                        res.close();
-                    } else {
-                        res.close();
-                    }
+                    if (!res.status) res.status = 500;
+                    res.close();
                 }
                 try {
                     await httpRequest.respond(res.toHttpResponse());
@@ -170,13 +165,9 @@ export class Request {
         this.search = url.search;
         const query: Query = {};
         for (let [k, v] of new URLSearchParams(url.search) as any) {
-            if (Array.isArray(query[k])) {
-                query[k] = [...query[k], v];
-            } else if (typeof query[k] === "string") {
-                query[k] = [query[k], v];
-            } else {
-                query[k] = v;
-            }
+            if (Array.isArray(query[k])) query[k] = [...query[k], v];
+            else if (typeof query[k] === "string") query[k] = [query[k], v];
+            else query[k] = v;
         }
         this.query = query;
     }
@@ -226,9 +217,8 @@ export class Response {
         const extname: string = path.extname(filePath);
         const contentType: any = lookup(extname.slice(1)) || '';
         const fileInfo = await stat(filePath);
-        if (!fileInfo.isFile) {
-            return;
-        }
+        if (!fileInfo.isFile) return;
+
         this.headers.append("Content-Type", contentType);
         if (transform) {
             const bytes = await readFile(filePath);
@@ -363,19 +353,13 @@ export const bodyParser = {
 export function simpleLog(): Handler {
     return async (req, res, next) => {
         await next();
-        if (!res) {
-            console.log(req.method, req.url);
-        } else if (res.status >= 500) {
-            console.log(red(res.status + ""), req.method, req.url);
-            if (req.error) {
-                console.log(red(req.error + ""));
-            }
-        } else if (res.status >= 400) {
-            console.log(yellow(res.status + ""), req.method, req.url);
-        } else if (res.status >= 300) {
-            console.log(cyan(res.status + ""), req.method, req.url);
-        } else if (res.status >= 200) {
-            console.log(green(res.status + ""), req.method, req.url);
+        if (!res) return console.log(req.method, req.url);
+        if (res.status >= 500) {
+            if (req.error) console.log(red(req.error + ""));
+            return console.log(red(res.status + ""), req.method, req.url);
         }
+        if (res.status >= 400) return console.log(yellow(res.status + ""), req.method, req.url);
+        if (res.status >= 300) return console.log(cyan(res.status + ""), req.method, req.url);
+        if (res.status >= 200) return console.log(green(res.status + ""), req.method, req.url);
     };
 }
