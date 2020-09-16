@@ -1,7 +1,3 @@
-const {stat, open, readFile} = Deno;
-
-type Reader = Deno.Reader;
-type Closer = Deno.Closer;
 import { lookup } from "https://deno.land/x/media_types/mod.ts";
 import {path, http, red, yellow, cyan, green} from "./deps.ts";
 
@@ -67,8 +63,12 @@ export class App {
                 try {
                     await runMiddlewares(self.middlewares, req, res);
                 } catch (e) {
-                    console.error("=====\nrunMiddlewar: ", e.message + `\nURL: ${req.url}\n=====`);
-                    if (res.status !== 500) res.status = 500;
+                    if (e instanceof Deno.errors.NotFound) {
+                        res.status = 404;
+                        console.error(`File not found: ${req.url}`);
+                        return res.close();
+                    }
+                    console.error(e);
                     res.close();
                 }
                 try {
@@ -150,8 +150,8 @@ export class Request {
 export class Response {
     status = 200;
     headers = new Headers();
-    body?: string | Uint8Array | Reader;
-    resources: Closer[] = [];
+    body?: string | Uint8Array | Deno.Reader;
+    resources: Deno.Closer[] = [];
 
     toHttpResponse(): http.Response {
         let {status = 200, headers, body = new Uint8Array(0)} = this;
@@ -175,24 +175,19 @@ export class Response {
         filePath: string,
         transform?: (src: string) => string
     ): Promise<void> {
-        const notModified = false;
-        if (notModified) {
-            this.status = 304;
-            return;
-        }
-        const extname: string = path.extname(filePath);
-        const contentType: any = lookup(extname.slice(1)) || '';
-        const fileInfo = await stat(filePath);
+        let extname: string = path.extname(filePath);
+        let contentType: any = await lookup(extname.slice(1)) || '';
+        let fileInfo = await Deno.stat(filePath);
         if (!fileInfo.isFile) return;
 
         this.headers.append("Content-Type", contentType);
         if (transform) {
-            const bytes = await readFile(filePath);
+            let bytes = await Deno.readFile(filePath);
             let str = new TextDecoder().decode(bytes);
             str = transform(str);
             this.body = new TextEncoder().encode(str);
         } else {
-            const file = await open(filePath);
+            let file = await Deno.open(filePath);
             this.resources.push(file);
             this.body = file;
         }
@@ -240,8 +235,12 @@ function isPathHandler(m: Middleware): m is PathHandler {
 
 export function static_(dir: string, ext: string = "html"): Middleware {
     return async (req, res, next) => {
-        if (req.url.slice(1)) return await next();
-        await res.file(path.join(dir, "index." + ext));
+        try {
+            await res.file(path.join(dir, req.url.slice(1) || "index." + ext));
+        } catch (e) {
+            //console.log(`${e}`);
+            await next();
+        }
     };
 }
 
