@@ -1,5 +1,3 @@
-const {stat, open, readFile} = Deno;
-
 type Reader = Deno.Reader;
 type Closer = Deno.Closer;
 import { lookup } from "https://deno.land/x/media_types/mod.ts";
@@ -175,26 +173,26 @@ export class Response {
         filePath: string,
         transform?: (src: string) => string
     ): Promise<void> {
-        const notModified = false;
-        if (notModified) {
-            this.status = 304;
-            return;
-        }
-        const extname: string = path.extname(filePath);
-        const contentType: any = lookup(extname.slice(1)) || '';
-        const fileInfo = await stat(filePath);
-        if (!fileInfo.isFile) return;
-
-        this.headers.append("Content-Type", contentType);
-        if (transform) {
-            const bytes = await readFile(filePath);
-            let str = new TextDecoder().decode(bytes);
-            str = transform(str);
-            this.body = new TextEncoder().encode(str);
-        } else {
-            const file = await open(filePath);
-            this.resources.push(file);
-            this.body = file;
+        try {
+            let contentType: any = await lookup(filePath);
+    
+            this.headers.append("Content-Type", contentType);
+            if (transform) {
+                let bytes = await Deno.readFile(filePath);
+                let str = new TextDecoder().decode(bytes);
+                str = transform(str);
+                this.body = new TextEncoder().encode(str);
+            } else {
+                let file = await Deno.open(filePath);
+                this.resources.push(file);
+                this.body = file;
+            }
+        } catch (e) {
+            if (e instanceof Deno.errors.NotFound) {
+                this.status = 404;
+                return console.error(`File not found: ${filePath}`);
+            }
+            console.error(e);
         }
     }
 }
