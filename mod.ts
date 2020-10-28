@@ -1,4 +1,4 @@
-import { lookup } from "https://deno.land/x/media_types/mod.ts";
+import { lookup } from "https://deno.land/x/media_types@v2.5.1/mod.ts";
 import {path, http, red, yellow, cyan, green} from "./deps.ts";
 
 type Method = "HEAD" | "OPTIONS" | "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
