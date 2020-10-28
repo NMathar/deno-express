@@ -22,7 +22,13 @@ jobs:
       run: curl -fsSL https://deno.land/x/install/install.sh | sh
     - name: bundle sources
       run: ~/.deno/bin/deno bundle test.ts
+      env:
+       RUST_BACKTRACE: 1
     - name: run test
       run: ~/.deno/bin/deno run test.ts
+      env:
+       RUST_BACKTRACE: 1
     - name: fetch example app
       run: ~/.deno/bin/deno bundle example/server.ts
+      env:
+       RUST_BACKTRACE: 1
