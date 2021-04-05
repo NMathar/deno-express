@@ -32,3 +32,7 @@ jobs:
       run: ~/.deno/bin/deno bundle example/server.ts
       env:
        RUST_BACKTRACE: 1
+    - name: run example app tests
+      run: cd example/test && ~/.deno/bin/deno test --unstable --allow-net --allow-read server.test.ts
+      env:
+        RUST_BACKTRACE: 1
