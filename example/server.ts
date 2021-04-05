@@ -1,12 +1,12 @@
 import * as expressive from "../mod.ts";
 import {Request, Response} from "../mod.ts"
-import {Next} from "../types/index.ts"
 
 const port = 3000;
 const app = new expressive.App();
 app.use(expressive.simpleLog(true));
 app.use(expressive.static_("./public"));
 app.use(expressive.bodyParser.json());
+
 app.get("/api/todos",  (req, res) => {
   res.json([{ name: "Buy some milk" }, { name: "Clean up the house!" }]);
 });

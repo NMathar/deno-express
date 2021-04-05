@@ -23,19 +23,14 @@ export class App {
                 if (abort) break
                 const req = new Request(httpRequest)
                 const res = new Response()
-                // try {
-                await runMiddlewares(self.middlewares, req, res)
-                // } catch (e) {
-                //     console.log("middleware error", e)
-                //     // if (e instanceof Deno.errors.NotFound) {
-                //     //     res.status = 404
-                //     //     console.error(`File not found: ${req.url}`)
-                //     //     return res.close()
-                //     // }
-                //     res.status = 404
-                //     // console.error(e)
-                //     res.close()
-                // }
+                try {
+                    await runMiddlewares(self.middlewares, req, res)
+                } catch (e) {
+                    if (e instanceof Deno.errors.NotFound) {
+                        res.status = 404
+                        console.error(`File not found: ${req.url}`)
+                    }
+                }
                 try {
                     await httpRequest.respond(res.toHttpResponse())
                 } finally {
