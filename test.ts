@@ -7,7 +7,7 @@ import { Request, simplePathMatcher } from "./mod.ts";
 
 Deno.test({
   name: "testParse_url",
-  fn() {
+  fn(): void {
     const req = new Request({
       url: "/files-tmb/1234/abc.png?key=val",
     });
@@ -18,7 +18,7 @@ Deno.test({
 
 Deno.test({
   name: "testSimplePathMatcher",
-  fn() {
+  fn(): void {
     assert(!!simplePathMatcher("/")("/"));
     assert(!!simplePathMatcher("/foo")("/foo"));
     assert(!!simplePathMatcher("/foo/")("/foo/"));
