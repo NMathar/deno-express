@@ -107,28 +107,13 @@ async function runMiddleware(
     if (isPathHandler(m)) {
         if (m.method === req.method) {
             const params = m.match(req.url)
-            // console.log(length)
-            // console.log(m.pattern)
-            // console.log(req.url)
-            // console.log(params)
-            console.log(length)
-            console.log(m.pattern.split('/{')[0])
-            console.log(req.url)
-            console.log(req.url.includes(m.pattern.split('/{')[0]))
-            // TODO: fix 404 routes for middlewares try to catch not matching routes
             if (params) {
                 req.extra.matchedPattern = m.pattern
                 req.params = params
                 return m.handle(req, res)
-            // } else if (params === null && req.url.includes(m.pattern.split('{')[0])) { // try to catch 404 urls TODO: change for other middlewares
-            } else if (params === null) {
-                res.empty(404)
-            } else {
-                await next()
             }
-
-            // if (length === 1) res.status = 404 // if is last next and no route is found the route does not exist
-            // await next()
+            if (length === 1) res.status = 404 // if is last next and no route is found the route does not exist
+            await next()
         }
         await next()
     } else {

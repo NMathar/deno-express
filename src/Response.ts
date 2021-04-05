@@ -32,6 +32,11 @@ export class Response {
         this.body = JSON.stringify(json)
     }
 
+    send(text: string): void {
+        this.headers.append("Content-Type", "text/plain")
+        this.body = text
+    }
+
     async file(
         filePath: string,
         transform?: (src: string) => string
