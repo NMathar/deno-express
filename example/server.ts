@@ -4,10 +4,10 @@ import {Next} from "../types/index.ts"
 
 const port = 3000;
 const app = new expressive.App();
-app.use(expressive.simpleLog());
+app.use(expressive.simpleLog(true));
 app.use(expressive.static_("./public"));
 app.use(expressive.bodyParser.json());
-app.get("/api/todos", (req, res) => {
+app.get("/api/todos",  (req, res) => {
   res.json([{ name: "Buy some milk" }, { name: "Clean up the house!" }]);
 });
 app.get("/api/user/{user_id}", (req, res) => {
