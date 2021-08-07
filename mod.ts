@@ -103,6 +103,10 @@ async function runMiddleware(
         if (m.method === req.method) {
             const params = m.match(req.url)
             if (params) {
+                // add split value by question mark to get real value
+                Object.keys(params).map(function(key, index) {
+                    params[key] = params[key].split('?')[0];
+                });
                 req.extra.matchedPattern = m.pattern
                 req.params = params
                 return m.handle(req, res)
