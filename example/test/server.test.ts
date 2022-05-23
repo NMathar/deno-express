@@ -6,7 +6,7 @@ const serverPath = new URL("../server.ts", import.meta.url).href;
 const baseUrl = "http://localhost:3000"
 
 // Spawn the server in a worker thread
-const worker = new Worker(serverPath, { type: "module", deno: true })
+const worker = new Worker(serverPath, { type: "module", deno: {} })
 
 // Wait for a moment to let the server start (this is a little hacky actually)
 await new Promise((resolve) => setTimeout(resolve, 3000));
